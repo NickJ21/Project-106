@@ -1,0 +1,39 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+/*body{
+    background-color: skyblue !important;
+}*/
+main{
+    height: 100vh;
+    max-width: 1200px;
+    margin:auto;
+    width:90%;
+    display:flex;
+}
+section{
+    padding:20px;
+}
+#list{
+    flex:2;
+}
+#form{
+    flex:1;
+}
+.task{
+    margin:10px 20px;
+    padding:10px;
+    display:flex;
+    border:1px solid;
+}
+.task .info{
+    flex:3;
+}
+.task .status{
+    flex:1;
+}
+.task .date-budget{
+    flex:1;
+}
