@@ -33,7 +33,7 @@ function displayTask(task) {
     <h5> ${task.title} </h5>
     <p> ${task.description} </p>
     </div>
-    <label class = "status"> ${task.status}</label>
+    <label class = "status bg-info-subtle"> ${task.status}</label>
     <div class = "date-budget">
     <label>${task.date} </label> <br>
     <label>${task.budget} </label> 
@@ -42,14 +42,38 @@ function displayTask(task) {
     </div>
     `;
 
-
-
     $("#list").append(syntax);
 }
 
+function loadTask(){
+    $.ajax({
+        type: "get",
+        url: "http://fsdiapi.azurewebsites.net/api/tasks/",
+        success: function(response){
+            console.log("response: ",response)
+
+            let data = JSON.parse(response);
+            console.log("response json: ", data);
+
+            //travel the array, get some element from the arry
+            for(let i=0; i<data.length; i++){
+                let task = data[i];
+                if(task.name === "Nick"){
+                    displayTask(task);
+                }
+            }
+        }
+    })
+}
+
+
 function init() {
     $("#btnSave").click(saveTask);
+    loadTask();
 }
 
 
 window.onload = init
+
+
+//create loadTask() function
