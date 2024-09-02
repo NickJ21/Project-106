@@ -10,6 +10,11 @@ function saveTask() {
     let taskSave = new Task(title, description, color, date, status, budget);
     console.log(taskSave);
 
+    if (!title || !description || !date || !status){
+        alert("Please fill out the required fields");
+        return;
+    }
+
     //save to server (post)
     $.ajax({
         type: "post",
@@ -18,17 +23,23 @@ function saveTask() {
         contentType: "application/json",
         success: function (response) {
             console.log(response)
+            displayTask(taskSave);
+            clearForm();
         },
         error: function (error) {
-            console.log(error)
+            console.log(error);
+            alert("There was an error saving your task. Please try again")
         }
     });
-    displayTask(taskSave);
+}
+
+function clearForm(){
+    $("#txtTitle, #txtDescription, #txtColor, #startDate, #selStatus, #numBudget").val("");
 }
 
 //display from server (get)
 function displayTask(task) {
-    let syntax = `<div class = "task" style="border-color:${task.color}">
+    let syntax = `<div class = "task" style="border-color:${task.color}" data-id="${task._id}">
     <div class = "info">
     <h5> ${task.title} </h5>
     <p> ${task.description} </p>
@@ -39,6 +50,7 @@ function displayTask(task) {
     <label>${task.budget} </label> 
 
     </div>
+    <button class= "btn btn-danger btn-sm delete-task">Delete</button>
     </div>
     `;
 
@@ -58,7 +70,7 @@ function loadTask(){
             //travel the array, get some element from the arry
             for(let i=0; i<data.length; i++){
                 let task = data[i];
-                if(task.name === "Nick"){
+                if(task.name === "NickJ"){
                     displayTask(task);
                 }
             }
@@ -66,10 +78,33 @@ function loadTask(){
     })
 }
 
+function deleteTask(id){
+    $.ajax({
+        type: "delete",
+        url: `http://fsdiapi.azurewebsites.net/api/tasks/${id}`,
+        success: function(response){
+            console.log("Task deleted successfully", response);
+            //Remove the task from the DOM
+            $(`div[data-id="${id}"]`).remove();
+        },
+        error: function(error){
+            console.log("Error deleting task", error);
+            alert("There was an error deleting the task")
+        }
+    });
+}
+
 
 function init() {
     $("#btnSave").click(saveTask);
     loadTask();
+
+    $("#list").on("click", ".delete-task", function(){
+        let taskId= $(this).closest(".task").data("id");
+        if (confirm("Are you sure you want to delete this task?")){
+            deleteTask(taskId);
+        }
+    })
 }
 
 
